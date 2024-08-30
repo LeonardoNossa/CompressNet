@@ -1,0 +1,246 @@
+---
+title: "CompressNet_usage"
+output: rmdformats::robobook
+vignette: >
+  %\VignetteIndexEntry{CompressNet_usage}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Usage of Netty function 
+Watching the usage of the package with **Netty**, the function that import a data frame as example.
+Obtaining two complete network (the second one with modified settings)
+```{r setup}
+library(CompressNet)
+
+df = Netty()
+par(mfrow = c(1, 2))
+Network = draw_complete_net(df, nodeA = "preferredName_A", nodeB = "preferredName_B", score = "score")
+Network2 = draw_complete_net(df, nodeA = "preferredName_A", nodeB = "preferredName_B", score = "score",fontSize = 1, opacity = 0.5, size = 35)
+
+```
+
+In addition to the networks reported above, the **draw_complete_network** function also allows you to obtain:
+
+## {.tabset}
+
+### **nodes**
+Returns the nodes that compose the network, so the participants of the interaction.
+```{r}
+Network$nodes
+```
+### **edges_data**
+Returns the data frame that describe the network, so report the nodes and the score of interactions.
+Furthermore, this element is very important because it is used in most compression functions
+```{r}
+Network$edges_data
+```
+### **Complete_network**
+Returns the igraph object, this is useful when I use, in future, the compression functions. 
+In fact, we will see, inside these functions we recall this object.
+```{r}
+Network$Complete_network
+```
+### **edges**
+Returns the dataframe of edges_data modified, in this case is a kable object (a graphically nicer structure)
+
+## Compression {.tabset}
+Using the **GraphCompression** function we can reduce the size of the network by filtering the network based on a value.
+As we can see, within the function we recall the two elements that we previously defined as important.
+
+### **degree**
+Here, the compression with the degree centrality
+Are reported two examples, because we can modify the top value (the value that is used to filter the network). 
+As we can see the network change.
+```{r}
+par(mfrow = c(1, 2))
+comp1 = GraphCompression(Network = Network$Complete_network, links = Network$edges_data, method = "degree")
+comp1b = GraphCompression(Network = Network$Complete_network, links = Network$edges_data, method = "degree", top = 0.3)
+```
+**This top value can be changed also in the other compression functions to obtain the desired results.**
+
+### **betweenness**
+Here, the compression with the betweenness centrality
+```{r}
+comp2 = GraphCompression(Network = Network$Complete_network, links = Network$edges_data, method = "betweenness")
+```
+
+### **closeness**
+Here, the compression with the closeness centrality
+```{r}
+comp3 = GraphCompression(Network = Network$Complete_network, links = Network$edges_data, method = "closeness")
+```
+
+### **eigen**
+Here, the compression with the eigen vector centrality
+```{r}
+comp4 = GraphCompression(Network = Network$Complete_network, links = Network$edges_data, method = "eigen")
+```
+
+### **pagerank**
+Here, the compression with the pagerank centrality
+```{r}
+comp5 = GraphCompression(Network = Network$Complete_network, links = Network$edges_data, method = "pagerank")
+```
+
+## Other outputs of GraphCompression {.tabset}
+Here, are reported all the other output of the **GraphCompression** function (referring only to the first example with degree method)
+
+### **filters_data**
+Returns a data frame with the filters, used to reduce the network
+```{r}
+comp1$filters_data
+```
+
+### **edges_data**
+Returns a data frame with all the information (nodes and scores) about the compressed graph.
+(It is useful when we want to further compress the already compressed network)
+```{r}
+comp1$edges_data
+```
+
+### **values**
+Returns a table (kable object) with the value (degree, betweenness, closeness, eigen, pagerank) for all nodes and
+we also see which node passes the filter and which does not.
+```{r}
+comp1$values
+```
+
+### **sub_graph**
+Returns the igraph object of the network. 
+(It is useful when we want to further compress the already compressed network)
+```{r}
+comp1$sub_graph
+```
+
+### **edges**
+Returns the kable object with all the information (nodes and scores) about the compressed graph.
+```{r}
+comp1$edges
+```
+
+## Clustering {.tabset}
+
+### **kmeans**
+Here, the compression method is based on the kmeans clustering. Are reported two examples, where the second one has a change in the number of clusters.
+```{r}
+par(mfrow = c(2, 3))
+comp6 = GraphCompression(Network = Network$Complete_network, method = "kmeans")
+comp6b = GraphCompression(Network = Network$Complete_network, method = "kmeans", num_cluster = 4)
+```
+
+### **dbscan**
+In this case the compression method is based on dbscan clustering. Two examples are shown, where in the second the eps value has been changed.
+```{r}
+par(mfrow = c(2, 3))
+comp7 = GraphCompression(Network = Network$Complete_network, method = "dbscan")
+comp7b = GraphCompression(Network = Network$Complete_network, method = "dbscan", eps = 0.6)
+```
+
+## Other outputs of GraphCompression (kmeans method) {.tabset}
+
+### **info**
+Returns the information about the composition of the cluster
+```{r}
+comp6$info
+```
+
+### **relationship**
+Returns a matrix that describe/represent the relationship/interaction between nodes
+```{r}
+comp6$relationship
+```
+
+### **cluster**
+Returns the cluster of the compressed network
+```{r}
+comp6$cluster
+```
+
+### **sub_graph**
+Returns the igraph object of the network (the simplified one). 
+(It is useful when we want to further compress the already compressed network)
+```{r}
+comp6$sub_graph
+```
+
+## Other outputs of GraphCompression (dbscamn method) {.tabset}
+
+### **cluster**
+Returns the cluster composition of the network 
+```{r}
+comp7$cluster
+```
+
+### **info**
+Returns the dbscan process settings and the results
+```{r}
+comp7$info
+```
+
+### **sub_graph**
+Returns the igraph object of the network (the simplified one). 
+(It is useful when we want to further compress the already compressed network)
+```{r}
+comp7$sub_graph
+```
+
+## Compression of a compressed network (sub-sub-graph)
+Here, is reported the compression of the sub_graph created with the degree method (example **comp1**).
+It is reported only one example as re-compression, but we can compress the sub_graph with all the method.
+(We can also continue to compress the sub-sub-graph obtaining a sub-sub-sub-graph)
+```{r}
+comp1c = GraphCompression(comp1$sub_graph, comp1$edges_data, method = "eigen")
+```
+
+# Usage of the R package taking the data via API
+Below is a simple example of the package, which pulls **TP53** data from NCBI via API.
+The data (a dataframe with all the information that we need):
+```{r}
+df2 = get_partners("TP53")
+options(width = 200)
+df2
+```
+
+Obtaining the complete network (left part) and one example of compression (right part):
+```{r}
+par(mfrow = c(1, 2))
+Net = draw_complete_net(df2, nodeA = "preferredName_A", nodeB = "preferredName_B", score = "score")
+Comp8 = GraphCompression(Net$Complete_network, Net$edges_data, method = "closeness")
+```
+
+# Usage of the R package using an own data frame
+
+Here we use this "strange" method to load the file because it is saved in **inst/extdata**, which is a folder where files external to the main package code are placed. This type of upload only applies in this case to the cartoon, normally just upload the file and read it.
+```{r}
+file_path = system.file("extdata", "Network_Data.csv", package = "CompressNet")
+df3 = read.csv(file_path)
+head(df3)
+```
+
+Obtaining the complete network (left part) and one example of compression (right part):
+```{r}
+par(mfrow = c(2, 2))
+Net2 = draw_complete_net(df3, nodeA = "Nodo_1", nodeB = "Nodo_2", score = "Peso")
+Comp9 = GraphCompression(Net2$Complete_network, method = "kmeans", num_cluster = 5)
+```
+
+# Session Info
+```{r, echo=FALSE}
+sessionInfo()
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
