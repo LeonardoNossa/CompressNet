@@ -23,7 +23,7 @@ Imports:
     methods (>= 4.4.0)
 Suggests:
     testthat (>= 3.2.1.1),
-    knitr ( >= 1.48),
+    knitr (>= 1.48),
     rmarkdown (>= 2.28)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
