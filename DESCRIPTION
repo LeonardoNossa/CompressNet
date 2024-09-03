@@ -13,17 +13,17 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 biocViews: Proteomics, Network, GraphAndNetwork
 Imports:
-    dbscan,
-    readr,
-    httr,
-    dplyr, 
-    scales,
-    igraph,
-    kableExtra,
-    methods
+    dbscan (>= 1.2-0),
+    readr (>= 2.1.5),
+    httr (>= 1.4.7),
+    dplyr (>= 1.1.4), 
+    scales (>= 1.3.0),
+    igraph (>= 2.0.3),
+    kableExtra (>= 1.4.0),
+    methods (>= 4.4.0)
 Suggests:
-    testthat (>= 3.0.0),
-    knitr,
-    rmarkdown
+    testthat (>= 3.2.1.1),
+    knitr ( >= 1.48),
+    rmarkdown (>= 2.28)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
