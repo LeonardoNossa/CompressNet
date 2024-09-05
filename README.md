@@ -6,6 +6,9 @@ How to install the package:
 
 ```R
 devtools::install_github("LeonardoNossa/CompressNet")
+
+devtools::install_github("username/CompressNet", build_vignettes = TRUE)
+
 ```
 
 If you want more details of the functions and how the package works see the vignette and the documentation inside the help in Rstudio.
